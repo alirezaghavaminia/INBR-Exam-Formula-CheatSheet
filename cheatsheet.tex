@@ -1,0 +1,234 @@
+% !TEX program = xelatex
+\documentclass[8pt]{extarticle}
+\usepackage[a4paper,margin=8mm,top=7mm,bottom=7mm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{fontspec}
+\usepackage{xcolor}
+\usepackage{multicol}
+\usepackage[most]{tcolorbox}
+\usepackage{microtype}
+
+\setmainfont{DejaVu Serif}
+\setsansfont{DejaVu Sans}
+\newfontfamily\farsifont[
+  Path=./fonts/, Extension=.ttf,
+  UprightFont=Vazirmatn-Regular, BoldFont=Vazirmatn-Bold,
+  Script=Arabic, Language=Persian]{Vazirmatn}
+
+\definecolor{navy}{HTML}{1F2A6B}
+\definecolor{redn}{HTML}{C0182B}
+\definecolor{paper}{HTML}{FBFBFF}
+\definecolor{boxline}{HTML}{3B4BA8}
+\definecolor{softblue}{HTML}{E9ECFA}
+\definecolor{softred}{HTML}{FDECEE}
+
+\TeXXeTstate=1
+\pagecolor{paper}
+\setlength{\parindent}{0pt}
+\setlength{\columnsep}{7mm}
+\setlength{\columnseprule}{0.3pt}
+\renewcommand{\arraystretch}{1.1}
+
+% Persian inline text (short phrases) and notes
+\newcommand{\fa}[1]{{\farsifont\beginR #1\endR}}
+\newcommand{\fr}[1]{\textcolor{redn}{\fa{#1}}}
+\newcommand{\note}[1]{\par\vspace{1pt}{\farsifont\color{redn}\noindent\leftskip=0pt plus 1fil\parfillskip=0pt\relax\beginR #1\endR\par}}
+\newcommand{\pa}[1]{)#1(}
+\newcommand{\lt}[1]{\beginL #1\endL}
+\newcommand{\unit}[1]{\textcolor{redn}{\small #1}}
+
+% Section box: title Persian (right) + English (left)
+\newtcolorbox{secbox}[2]{
+  enhanced, breakable=false, colback=white, colframe=boxline,
+  boxrule=0.6pt, arc=2pt, left=3pt,right=3pt,top=1pt,bottom=2pt,
+  before skip=2.2pt, after skip=2.2pt,
+  fonttitle=\bfseries\small, coltitle=navy, colbacktitle=softblue,
+  title={\hbox to \hsize{\sffamily #1\hfill\fa{\bfseries #2}}},
+  toptitle=1pt, bottomtitle=1pt
+}
+
+\begin{document}
+\pagestyle{empty}
+\setlength{\abovedisplayskip}{2pt}\setlength{\belowdisplayskip}{2pt}\setlength{\abovedisplayshortskip}{1pt}\setlength{\belowdisplayshortskip}{1pt}
+
+\begin{center}
+  {\color{navy}\LARGE\bfseries\sffamily HVAC \& Refrigeration Cheat Sheet}\\[1pt]
+  {\color{redn}\large \fa{\bfseries برگه فرمول‌های تهویه مطبوع و تبرید}}
+\end{center}
+\vspace{-3pt}
+
+\begin{multicols}{2}
+
+%==================== LEFT COLUMN ====================
+\begin{secbox}{COP -- Refrigeration}{ضریب عملکرد \pa{سیکل تبرید}}
+\[
+\mathrm{COP}_{\text{ref}}=\frac{Q_{eva}}{W_{comp}}=\frac{Q_{eva}}{Q_{cond}-Q_{eva}}
+\]
+\note{$Q_{eva}$: حرارت جذب‌شده از محیط \quad|\quad $W_{comp}$: کار داده‌شده به کمپرسور}
+\end{secbox}
+
+\begin{secbox}{COP -- Heat Pump}{ضریب عملکرد \pa{سیکل حرارتی}}
+\[
+\mathrm{COP}_{\text{hp}}=\frac{Q_{cond}}{W_{comp}}=\frac{Q_{cond}}{Q_{cond}-Q_{eva}}
+\]
+\end{secbox}
+
+\begin{secbox}{Evaporative Cooling Eff.}{راندمان سیستم سرمایشی تبخیری}
+\[
+\eta=\frac{T_{in}-T_{out}}{T_{in}-T_{w.b}}
+\]
+\note{$T_{w.b}$: دمای تر محیط}
+\end{secbox}
+
+\begin{secbox}{Velocity Pressure \& Flow}{رابطه فشار دینامیکی و دبی}
+\[
+P_v=\tfrac12\rho V^2\;\Rightarrow\; V=\sqrt{\frac{2P_v}{\rho}}
+\]
+\note{$P_v$: فشار دینامیکی \pa{پاسکال} \quad|\quad $\rho\approx 1.2\ \mathrm{kg/m^3}$ \quad|\quad $V$ بر حسب $\mathrm{m/s}$}
+\[
+V=\sqrt{\frac{2\,\Delta P}{\rho}}=\sqrt{\frac{2\,(P_T-P_S)}{\rho}}
+\]
+\note{$\Delta P$: اختلاف فشار کل و فشار استاتیکی \;\pa{$P_T$: فشار کل، $P_S$: فشار استاتیکی}}
+\[
+Q=V\cdot A\;\Rightarrow\; V=\frac{Q}{A}
+\]
+\note{$Q$: دبی حجمی}
+\end{secbox}
+
+\begin{secbox}{Std Air Velocity}{فشار سرعتی و سرعت استاندارد}
+\[
+V_0=4005\sqrt{VP_f}
+\]
+\note{$VP_f$: فشار دینامیکی هوا \pa{فشار سرعتی} بر حسب $\mathrm{in\,w}$ \pa{اینچ آب} \;|\; $V_0$ بر حسب $\mathrm{ft/min}$}
+\vspace{2pt}
+\fr{تصحیح سرعت:}\quad
+$\displaystyle V_c=\sqrt{\frac{\rho_{std}}{\rho_{amb}}}\times V_0$
+\note{$V_0$: سرعت قرائت‌شده از مانومتر \;|\; $\rho_{std}$: چگالی استاندارد \;|\; $\rho_{amb}$: چگالی محیط}
+\end{secbox}
+
+\begin{secbox}{Pipe Pressure Loss}{افت فشار در لوله‌ها}
+\[
+\Delta P=\frac{f\,L}{D}\cdot\frac{V^2}{2g}
+\]
+\end{secbox}
+
+\begin{secbox}{Air Changes per Hour}{نوبت هوا در ساعت}
+\[
+\text{SI:}\quad \mathrm{ACH}=\frac{Q\ (\mathrm{m^3/h})}{V\ (\mathrm{m^3})}
+\qquad
+\text{IP:}\quad \mathrm{ACH}=\frac{60\,\mathrm{CFM}}{V\ (\mathrm{ft^3})}
+\]
+\end{secbox}
+
+\begin{secbox}{Heat Transfer -- Insulation}{انتقال حرارت از عایق}
+\[
+Q=\frac{\Delta T}{R}\;,\qquad
+R=\frac1{h_i}+\frac1{h_o}+\frac{L}{K}
+\]
+\note{$R$: مقاومت حرارتی \;|\; $h_i,h_o$: ضریب انتقال حرارت جابه‌جایی \;|\; $K$: هدایت حرارتی عایق}
+\end{secbox}
+
+\begin{secbox}{Coil Condensate}{آب چگالیده روی سطح کویل}
+\[
+\dot m_{w}=\frac{Q_L}{h_{fg}}
+\]
+\[
+\dot m_{w}\ (\mathrm{lb/h})=\frac{Q_L\ (\mathrm{Btu/h})}{1060}
+\]
+\note{ضریب پوند بر ساعت}
+\[
+\dot m_{w}\ (\mathrm{gal/h})=\frac{Q_L\ (\mathrm{Btu/h})}{8840.4}
+\]
+\note{ضریب گالن بر ساعت}
+\end{secbox}
+
+%==================== RIGHT COLUMN ====================
+\begin{secbox}{Total Heat}{گرمای کل}
+\[
+Q_T=Q_S+Q_L=\dot m\,\Delta h=\dot m\,(h_2-h_1)
+\]
+\note{$\dot m$ بر حسب kg/s}
+\begin{tcolorbox}[title={\fa{برای هوا}},fonttitle=\small,coltitle=redn,colbacktitle=softred,colback=softred,colframe=redn,boxrule=0.6pt,arc=1.5pt,left=2pt,right=2pt,top=0pt,bottom=0pt]
+\[
+Q_{T}=4.5\,\lambda\cdot \mathrm{CFM}\cdot(h_2-h_1)
+\]
+\end{tcolorbox}
+\end{secbox}
+
+\begin{secbox}{Water \& Steam at 100\,$^\circ$C}{خواص آب و بخار در $100^\circ\mathrm{C}$}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}l@{\;=\;}l@{\;=\;}l@{}}
+$h_f$ & $180\ \mathrm{Btu/lb}$ & $418\ \mathrm{kJ/kg}$\\
+$h_{fg}$ & $970\ \mathrm{Btu/lb}$ & $2257\ \mathrm{kJ/kg}$\\
+$h_g$ & $1150\ \mathrm{Btu/lb}$ & $2675\ \mathrm{kJ/kg}$
+\end{tabular}
+\note{$h_f$: آنتالپی آب اشباع \;|\; $h_{fg}$: گرمای نهان بخار \;|\; $h_g$: آنتالپی بخار اشباع \pa{همگی در $100^\circ\mathrm{C}$}}
+\end{secbox}
+
+\begin{secbox}{Specific Heat Capacities}{ظرفیت گرمایی ویژه}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}l@{\;=\;}l@{\;=\;}l@{\quad}r@{}}
+$C_{\text{water}}$ & $4.18\ \mathrm{kJ/kg\cdot K}$ & $1\ \mathrm{Btu/lb\cdot F}$ & \fa{آب}\\
+$C_{\text{air}}$ & $1.005\ \mathrm{kJ/kg\cdot K}$ & $0.24\ \mathrm{Btu/lb\cdot F}$ & \fa{هوا}\\
+$C_{\text{steam}}$ & $1.87\ \mathrm{kJ/kg\cdot K}$ & $0.48\ \mathrm{Btu/lb\cdot F}$ & \fa{بخار}
+\end{tabular}
+\note{ظرفیت گرمایی بخار مافوق گرم}
+\end{secbox}
+
+\begin{secbox}{Bypass \& Contact Factor}{ضریب کنارگذر و ضریب تماس}
+\[
+\mathrm{BF}=\frac{T_{out}-T_{coil}}{T_{in}-T_{coil}}
+\qquad
+\mathrm{CF}=\frac{T_{in}-T_{out}}{T_{in}-T_{coil}}
+\qquad
+\mathrm{BF}+\mathrm{CF}=1
+\]
+\note{$\mathrm{BF}$: ضریب کنارگذر \;|\; $\mathrm{CF}$: ضریب تماس}
+\end{secbox}
+
+\begin{secbox}{Cooling Coil Efficiency}{راندمان کویل سرمایشی}
+\[
+\eta=\frac{T_{in}-T_{out}}{T_{in}-T_{adp}}
+\]
+\note{$T_{adp}$: دمای نقطه شبنم دستگاه}
+\end{secbox}
+
+\begin{secbox}{Effective Sensible Heat Factor}{ضریب گرمای محسوس مؤثر}
+\[
+\mathrm{ESHF}=\frac{\mathrm{ERSH}}{\mathrm{ERSH}+\mathrm{ERLH}}
+\]
+\[
+\begin{cases}
+\mathrm{ERSH}=\mathrm{RSH}+\mathrm{BF}\times \mathrm{OASH}\\[2pt]
+\mathrm{ERLH}=\mathrm{RLH}+\mathrm{BF}\times \mathrm{OALH}
+\end{cases}
+\]
+\note{$\mathrm{ERSH}$: گرمای محسوس مؤثر اتاق \;|\; $\mathrm{ERLH}$: گرمای نهان مؤثر اتاق}
+\end{secbox}
+
+\begin{secbox}{Room \& Outdoor-Air Loads}{بارهای اتاق و هوای بیرون}
+\[
+\begin{cases}
+\mathrm{RSH}=1.08\,\mathrm{CFM}\,(T_{room}-T_{in})\\[2pt]
+\mathrm{RLH}=0.68\,\mathrm{CFM}\,(W_{room}-W_{in})
+\end{cases}
+\]
+\note{$\mathrm{RSH}$: گرمای محسوس اتاق \;|\; $\mathrm{RLH}$: گرمای نهان اتاق}
+\[
+\begin{cases}
+\mathrm{OASH}=1.08\,\mathrm{CFM}\,(T_{out}-T_{room})\\[2pt]
+\mathrm{OALH}=0.68\,\mathrm{CFM}\,(W_{out}-W_{room})
+\end{cases}
+\]
+\note{$\mathrm{OASH}$: گرمای محسوس هوای بیرون \;|\; $\mathrm{OALH}$: گرمای نهان بخار هوای بیرون}
+\end{secbox}
+
+\begin{secbox}{Apparatus (Fan-Coil) Airflow}{دبی حجمی دستگاه \pa{فن کویل}}
+\[
+\mathrm{CFM}=\frac{\mathrm{ERSH}}{1.08\,(T_{room}-T_{adp})\times(1-\mathrm{BF})}
+\]
+\note{$T_{adp}$: دمای نقطه شبنم دستگاه \;|\; $T_{room}$: دمای اتاق}
+\end{secbox}
+
+\end{multicols}
+\end{document}
