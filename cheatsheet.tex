@@ -1,17 +1,19 @@
 % !TEX program = xelatex
 \documentclass[8pt]{extarticle}
-\usepackage[a4paper,margin=8mm,top=7mm,bottom=7mm]{geometry}
+\usepackage[a4paper,margin=8mm,top=8mm,bottom=8mm]{geometry}
 \usepackage{amsmath,amssymb}
 \usepackage{fontspec}
 \usepackage{xcolor}
 \usepackage{multicol}
 \usepackage[most]{tcolorbox}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,calc}
 \usepackage{microtype}
 
 \setmainfont{DejaVu Serif}
 \setsansfont{DejaVu Sans}
 \newfontfamily\farsifont[
-  Path=./fonts/, Extension=.ttf,
+  Path=../fonts/, Extension=.ttf,
   UprightFont=Vazirmatn-Regular, BoldFont=Vazirmatn-Bold,
   Script=Arabic, Language=Persian]{Vazirmatn}
 
@@ -21,6 +23,7 @@
 \definecolor{boxline}{HTML}{3B4BA8}
 \definecolor{softblue}{HTML}{E9ECFA}
 \definecolor{softred}{HTML}{FDECEE}
+\definecolor{warnfg}{HTML}{8A4B00}
 
 \TeXXeTstate=1
 \pagecolor{paper}
@@ -29,15 +32,14 @@
 \setlength{\columnseprule}{0.3pt}
 \renewcommand{\arraystretch}{1.1}
 
-% Persian inline text (short phrases) and notes
+% ---------- Persian helpers ----------
 \newcommand{\fa}[1]{{\farsifont\beginR #1\endR}}
-\newcommand{\fr}[1]{\textcolor{redn}{\fa{#1}}}
-\newcommand{\note}[1]{\par\vspace{1pt}{\farsifont\color{redn}\noindent\leftskip=0pt plus 1fil\parfillskip=0pt\relax\beginR #1\endR\par}}
 \newcommand{\pa}[1]{)#1(}
 \newcommand{\lt}[1]{\beginL #1\endL}
-\newcommand{\unit}[1]{\textcolor{redn}{\small #1}}
+\newcommand{\note}[1]{\par\vspace{1pt}{\farsifont\color{redn}\noindent\leftskip=0pt plus 1fil\parfillskip=0pt\relax\beginR #1\endR\par}}
+\newcommand{\ptext}[1]{\par\vspace{1pt}{\farsifont\color{black}\noindent\leftskip=0pt plus 1fil\parfillskip=0pt\relax\beginR #1\endR\par}}
+\newcommand{\warn}[1]{\par\vspace{1.5pt}\begin{tcolorbox}[colback=orange!10,colframe=orange!80!black,boxrule=0.5pt,arc=1.5pt,left=2.5pt,right=2.5pt,top=1pt,bottom=1pt,before skip=0pt,after skip=1pt]{\farsifont\color{warnfg}\noindent\leftskip=0pt plus 1fil\parfillskip=0pt\relax\beginR\textbf{اصلاح:}\ #1\endR\par}\end{tcolorbox}}
 
-% Section box: title Persian (right) + English (left)
 \newtcolorbox{secbox}[2]{
   enhanced, breakable=false, colback=white, colframe=boxline,
   boxrule=0.6pt, arc=2pt, left=3pt,right=3pt,top=1pt,bottom=2pt,
@@ -46,189 +48,435 @@
   title={\hbox to \hsize{\sffamily #1\hfill\fa{\bfseries #2}}},
   toptitle=1pt, bottomtitle=1pt
 }
+\newcommand{\topic}[2]{\par\vspace{3pt}\noindent\begin{tcolorbox}[colback=navy,colframe=navy,boxrule=0pt,arc=2pt,left=4pt,right=4pt,top=1.5pt,bottom=1.5pt,before skip=2pt,after skip=2pt]\color{white}\hbox to \linewidth{\bfseries\sffamily #1\hfill\fa{\bfseries #2}}\end{tcolorbox}}
 
 \begin{document}
 \pagestyle{empty}
 \setlength{\abovedisplayskip}{2pt}\setlength{\belowdisplayskip}{2pt}\setlength{\abovedisplayshortskip}{1pt}\setlength{\belowdisplayshortskip}{1pt}
 
 \begin{center}
-  {\color{navy}\LARGE\bfseries\sffamily HVAC \& Refrigeration Cheat Sheet}\\[1pt]
-  {\color{redn}\large \fa{\bfseries برگه فرمول‌های تهویه مطبوع و تبرید}}
+  {\color{navy}\LARGE\bfseries\sffamily HVAC Cheat Sheet \,--\, Part 2}\\[1pt]
+  {\color{redn}\large \fa{\bfseries سایکرومتریک، انتقال حرارت، فن‌ها و پمپ‌ها}}\\[1pt]
+  {\small\farsifont\color{warnfg}\fa{کادرهای نارنجی «اصلاح» جاهایی هستند که فرمول جزوه ناقص یا نادرست بود و فرم درست آن نوشته شده است}}
 \end{center}
-\vspace{-3pt}
+\vspace{-2pt}
 
 \begin{multicols}{2}
 
-%==================== LEFT COLUMN ====================
-\begin{secbox}{COP -- Refrigeration}{ضریب عملکرد \pa{سیکل تبرید}}
-\[
-\mathrm{COP}_{\text{ref}}=\frac{Q_{eva}}{W_{comp}}=\frac{Q_{eva}}{Q_{cond}-Q_{eva}}
-\]
-\note{$Q_{eva}$: حرارت جذب‌شده از محیط \quad|\quad $W_{comp}$: کار داده‌شده به کمپرسور}
+%=====================================================================
+\topic{1. Psychrometrics \& Loads}{۱. سایکرومتریک و بارها}
+
+\begin{secbox}{Sensible Heat Factor}{ضریب حرارت محسوس}
+\[ \mathrm{SHF}=\frac{SH}{SH+LH}=\frac{SH}{TH} \]
+\note{$\mathrm{SHF}$: ضریب حرارت محسوس \;|\; $SH$: حرارت محسوس \;|\; $LH$: حرارت نهان \;|\; $TH$: حرارت کل}
 \end{secbox}
 
-\begin{secbox}{COP -- Heat Pump}{ضریب عملکرد \pa{سیکل حرارتی}}
-\[
-\mathrm{COP}_{\text{hp}}=\frac{Q_{cond}}{W_{comp}}=\frac{Q_{cond}}{Q_{cond}-Q_{eva}}
-\]
+\begin{secbox}{Relative Humidity (RH)}{رطوبت نسبی}
+\[ \mathrm{RH}=\varphi=\frac{P_v}{P_{g}(T)} \]
+\ptext{نسبت رطوبت موجود در هوا به حداکثر رطوبتی که هوا در حالت اشباع می‌تواند در خود حل کند.}
+\note{نکته: نسبت رطوبت \pa{$\omega$}، رطوبت مخصوص و رطوبت مطلق (طبق نوشتهٔ جزوه، همان هستند).}
+\warn{$\mathrm{RH}=P_v/P_g$ است؛ نسبت $\omega/\omega_s$ «درجه اشباع» است و فقط تقریباً با RH برابر است. همچنین رطوبت مخصوص $\gamma=\tfrac{m_v}{m_v+m_a}$ با نسبت رطوبت $\omega=\tfrac{m_v}{m_a}$ یکی نیست \pa{$\gamma=\omega/(1+\omega)$}؛ این با نکتهٔ بالا و تعریف صفحهٔ دیگر جزوه تناقض دارد.}
 \end{secbox}
 
-\begin{secbox}{Evaporative Cooling Eff.}{راندمان سیستم سرمایشی تبخیری}
-\[
-\eta=\frac{T_{in}-T_{out}}{T_{in}-T_{w.b}}
-\]
-\note{$T_{w.b}$: دمای تر محیط}
+\begin{secbox}{Cooling \& Dehumidification}{فرآیند سرمایش و رطوبت‌زدایی}
+\begin{center}\begin{tikzpicture}[scale=0.5,>=Stealth]
+\draw[->] (0,0)--(5,0) node[right]{\scriptsize $T$};
+\draw[->] (0,0)--(0,3) node[above]{\scriptsize $w$};
+\draw[navy,thick] (0.3,0.3) .. controls (2,0.8) and (3.5,2.0) .. (4.6,2.9);
+\fill (4,1.7) circle (2pt) node[above left]{\scriptsize 1};
+\fill (1.6,0.58) circle (2pt) node[below right]{\scriptsize 2};
+\draw[->,redn,thick] (4,1.7)--(1.6,0.58);
+\draw[dashed,gray] (4,1.7)--(4,0); \draw[dashed,gray] (1.6,0.58)--(1.6,0);
+\draw[dashed,gray] (4,1.7)--(0,1.7); \draw[dashed,gray] (1.6,0.58)--(0,0.58);
+\end{tikzpicture}\end{center}
+\[ q_{12}=\dot m_a\Big[(h_1-h_2)-(w_1-w_2)\,h_{w2}\Big] \]
+\note{$\dot m_a$: دبی جرمی هوای خشک \;|\; $h_{w2}$: آنتالپی آب مایع چگالیده \;|\; جملهٔ دوم گرمای آب چگالیده‌شده است}
 \end{secbox}
 
-\begin{secbox}{Velocity Pressure \& Flow}{رابطه فشار دینامیکی و دبی}
-\[
-P_v=\tfrac12\rho V^2\;\Rightarrow\; V=\sqrt{\frac{2P_v}{\rho}}
-\]
-\note{$P_v$: فشار دینامیکی \pa{پاسکال} \quad|\quad $\rho\approx 1.2\ \mathrm{kg/m^3}$ \quad|\quad $V$ بر حسب $\mathrm{m/s}$}
-\[
-V=\sqrt{\frac{2\,\Delta P}{\rho}}=\sqrt{\frac{2\,(P_T-P_S)}{\rho}}
-\]
-\note{$\Delta P$: اختلاف فشار کل و فشار استاتیکی \;\pa{$P_T$: فشار کل، $P_S$: فشار استاتیکی}}
-\[
-Q=V\cdot A\;\Rightarrow\; V=\frac{Q}{A}
-\]
-\note{$Q$: دبی حجمی}
+\begin{secbox}{Adiabatic Mixing of Moist Air}{اختلاط آدیاباتیک هوای مرطوب}
+\begin{center}\begin{tikzpicture}[scale=0.55,>=Stealth]
+\draw[->] (0,1)--(1.6,0.2); \draw[->] (0,-1)--(1.6,-0.2);
+\draw (1.6,0.2)--(1.6,-0.2);
+\draw[->] (1.6,0)--(3.2,0);
+\node[left] at (0,1) {\scriptsize $\dot m_{da1},h_1,w_1$};
+\node[left] at (0,-1) {\scriptsize $\dot m_{da2},h_2,w_2$};
+\node[right] at (3.2,0) {\scriptsize $h_3,w_3$};
+\end{tikzpicture}\end{center}
+\[ \frac{h_2-h_3}{h_3-h_1}=\frac{w_2-w_3}{w_3-w_1}=\frac{\dot m_{da1}}{\dot m_{da2}} \]
+\warn{در جزوه جملهٔ میانی به‌صورت $\frac{w_2-w_1}{w_2-w_1}$ نوشته شده که برابر ۱ می‌شود؛ شکل درست همان است که در کادر بالا آمده.}
+\[ y_3=\frac{\dot m_1y_1+\dot m_2y_2}{\dot m_1+\dot m_2} \]
+\note{توجه: برای رطوبت نسبی \pa{RH} نمی‌توان از این رابطه استفاده کرد.}
+\warn{این میانگین وزنی دقیقاً برای $h$ و $w$ با دبی جرمی هوای خشک برقرار است؛ برای دما فقط تقریبی است \pa{وقتی $c_p$ ثابت فرض شود}.}
 \end{secbox}
 
-\begin{secbox}{Std Air Velocity}{فشار سرعتی و سرعت استاندارد}
-\[
-V_0=4005\sqrt{VP_f}
-\]
-\note{$VP_f$: فشار دینامیکی هوا \pa{فشار سرعتی} بر حسب $\mathrm{in\,w}$ \pa{اینچ آب} \;|\; $V_0$ بر حسب $\mathrm{ft/min}$}
-\vspace{2pt}
-\fr{تصحیح سرعت:}\quad
-$\displaystyle V_c=\sqrt{\frac{\rho_{std}}{\rho_{amb}}}\times V_0$
-\note{$V_0$: سرعت قرائت‌شده از مانومتر \;|\; $\rho_{std}$: چگالی استاندارد \;|\; $\rho_{amb}$: چگالی محیط}
-\end{secbox}
-
-\begin{secbox}{Pipe Pressure Loss}{افت فشار در لوله‌ها}
-\[
-\Delta P=\frac{f\,L}{D}\cdot\frac{V^2}{2g}
-\]
-\end{secbox}
-
-\begin{secbox}{Air Changes per Hour}{نوبت هوا در ساعت}
-\[
-\text{SI:}\quad \mathrm{ACH}=\frac{Q\ (\mathrm{m^3/h})}{V\ (\mathrm{m^3})}
-\qquad
-\text{IP:}\quad \mathrm{ACH}=\frac{60\,\mathrm{CFM}}{V\ (\mathrm{ft^3})}
-\]
-\end{secbox}
-
-\begin{secbox}{Heat Transfer -- Insulation}{انتقال حرارت از عایق}
-\[
-Q=\frac{\Delta T}{R}\;,\qquad
-R=\frac1{h_i}+\frac1{h_o}+\frac{L}{K}
-\]
-\note{$R$: مقاومت حرارتی \;|\; $h_i,h_o$: ضریب انتقال حرارت جابه‌جایی \;|\; $K$: هدایت حرارتی عایق}
-\end{secbox}
-
-\begin{secbox}{Coil Condensate}{آب چگالیده روی سطح کویل}
-\[
-\dot m_{w}=\frac{Q_L}{h_{fg}}
-\]
-\[
-\dot m_{w}\ (\mathrm{lb/h})=\frac{Q_L\ (\mathrm{Btu/h})}{1060}
-\]
-\note{ضریب پوند بر ساعت}
-\[
-\dot m_{w}\ (\mathrm{gal/h})=\frac{Q_L\ (\mathrm{Btu/h})}{8840.4}
-\]
-\note{ضریب گالن بر ساعت}
-\end{secbox}
-
-%==================== RIGHT COLUMN ====================
-\begin{secbox}{Total Heat}{گرمای کل}
-\[
-Q_T=Q_S+Q_L=\dot m\,\Delta h=\dot m\,(h_2-h_1)
-\]
-\note{$\dot m$ بر حسب kg/s}
-\begin{tcolorbox}[title={\fa{برای هوا}},fonttitle=\small,coltitle=redn,colbacktitle=softred,colback=softred,colframe=redn,boxrule=0.6pt,arc=1.5pt,left=2pt,right=2pt,top=0pt,bottom=0pt]
-\[
-Q_{T}=4.5\,\lambda\cdot \mathrm{CFM}\cdot(h_2-h_1)
-\]
+\begin{secbox}{Sensible Heat}{گرمای محسوس}
+\[ Q_S=\lambda\,\dot m\,c_p\,\Delta T=\lambda\,\rho\,\dot V\,c_p\,\Delta T \]
+\note{$\dot m$ بر حسب kg/s \;|\; $\dot V$ بر حسب m$^3$/s \;|\; $\lambda$: ضریب تصحیح ارتفاع \pa{در جزوه تعریف نشده؛ بر اساس ضرایب $4.5$ و $1.08$ همین فرض شده است}}
+\begin{tcolorbox}[colback=softred,colframe=redn,boxrule=0.5pt,arc=1.5pt,left=2pt,right=2pt,top=0pt,bottom=0pt,title={\fa{برای هوا}},fonttitle=\small,coltitle=redn,colbacktitle=softred]
+\[ Q_S=1.22\,\dot V\,\Delta T\,\lambda\ \ [\mathrm{kW}],\quad \dot V\ \text{in m}^3/\mathrm{s} \]
+\[ \text{IP:}\ \ Q_S=1.08\,\lambda\,\mathrm{CFM}\,\Delta T\ \ [\mathrm{Btu/hr}] \]
 \end{tcolorbox}
+\begin{tcolorbox}[colback=softred,colframe=redn,boxrule=0.5pt,arc=1.5pt,left=2pt,right=2pt,top=0pt,bottom=0pt,title={\fa{برای آب}},fonttitle=\small,coltitle=redn,colbacktitle=softred]
+\[ Q=500\,\lambda\,\mathrm{GPM}\,\Delta T\ \ [\mathrm{Btu/hr}] \]
+\end{tcolorbox}
+\warn{ضریب $1.22$ فقط برای $\dot V$ بر حسب m$^3$/s و خروجی kW است \pa{$\rho c_p\approx1.2\times1.005$}؛ اگر $\dot V$ بر حسب m$^3$/h باشد: $Q_S\approx0.34\,\dot V\,\Delta T$ بر حسب وات. برای آب ضریب $\lambda$ لازم نیست \pa{اگر $\lambda$ تصحیح چگالی هواست}، و برای فرمول آب بهتر است زیرنویس $T$ حذف شود چون فقط گرمای محسوس دارد.}
 \end{secbox}
 
-\begin{secbox}{Water \& Steam at 100\,$^\circ$C}{خواص آب و بخار در $100^\circ\mathrm{C}$}
-\renewcommand{\arraystretch}{1.3}
-\begin{tabular}{@{}l@{\;=\;}l@{\;=\;}l@{}}
-$h_f$ & $180\ \mathrm{Btu/lb}$ & $418\ \mathrm{kJ/kg}$\\
-$h_{fg}$ & $970\ \mathrm{Btu/lb}$ & $2257\ \mathrm{kJ/kg}$\\
-$h_g$ & $1150\ \mathrm{Btu/lb}$ & $2675\ \mathrm{kJ/kg}$
-\end{tabular}
-\note{$h_f$: آنتالپی آب اشباع \;|\; $h_{fg}$: گرمای نهان بخار \;|\; $h_g$: آنتالپی بخار اشباع \pa{همگی در $100^\circ\mathrm{C}$}}
+\begin{secbox}{Latent Heat}{گرمای نهان تبخیر}
+\[ Q_L=\lambda\,\dot m\,h_{fg} \]
+\[ \text{IP (air):}\quad Q_L=0.68\,\lambda\,\mathrm{CFM}\,(w_2-w_1) \]
+\note{$\dot m$ بر حسب kg/s \;|\; $w$ بر حسب grain/lb}
+\warn{ضریب $0.68$ فقط وقتی درست است که $w$ بر حسب grain/lb باشد \pa{$7000\ \mathrm{grain}=1\ \mathrm{lb}$}؛ با lb/lb باید ضریب $4760$ استفاده شود.}
 \end{secbox}
 
-\begin{secbox}{Specific Heat Capacities}{ظرفیت گرمایی ویژه}
-\renewcommand{\arraystretch}{1.3}
-\begin{tabular}{@{}l@{\;=\;}l@{\;=\;}l@{\quad}r@{}}
-$C_{\text{water}}$ & $4.18\ \mathrm{kJ/kg\cdot K}$ & $1\ \mathrm{Btu/lb\cdot F}$ & \fa{آب}\\
-$C_{\text{air}}$ & $1.005\ \mathrm{kJ/kg\cdot K}$ & $0.24\ \mathrm{Btu/lb\cdot F}$ & \fa{هوا}\\
-$C_{\text{steam}}$ & $1.87\ \mathrm{kJ/kg\cdot K}$ & $0.48\ \mathrm{Btu/lb\cdot F}$ & \fa{بخار}
-\end{tabular}
-\note{ظرفیت گرمایی بخار مافوق گرم}
+\begin{secbox}{Ideal Gas \& Humidity Ratio}{گاز کامل و نسبت رطوبت}
+\[ P=\rho R T\ \ \text{\fa{\pa{جرم مخصوص}}}\qquad Pv=RT\ \ \text{\fa{\pa{حجم مخصوص}}} \]
+\[ R_a=287\ \tfrac{\mathrm{J}}{\mathrm{kg\cdot K}}\ \ \text{\fa{هوای خشک}}\qquad R_v=461\ \tfrac{\mathrm{J}}{\mathrm{kg\cdot K}}\ \ \text{\fa{بخار آب}} \]
+\[ P_{total}=P_a+P_v \]
+\[ \omega=\frac{m_v}{m_a}=0.622\frac{P_v}{P_a}=0.622\frac{P_v}{P_{total}-P_v} \]
+\note{$\omega$: نسبت رطوبت \;|\; $P_v$: فشار بخار آب \;|\; $P_a$: فشار هوای خشک}
+\[ \gamma=\frac{m_v}{m_v+m_a}\quad\text{\fa{رطوبت مطلق در جزوه}} \]
+\note{نسبت جرم بخار آب به جرم کل هوای مخلوط}
+\warn{در معادلهٔ $Pv=RT$ حرف $v$ باید حجم مخصوص \pa{کوچک} باشد نه حجم کل. رابطهٔ $\gamma=\omega/(1+\omega)$ برقرار است؛ این کمیت در مراجع استاندارد «رطوبت مخصوص» نامیده می‌شود و «رطوبت مطلق» یعنی $m_v/V$.}
 \end{secbox}
 
-\begin{secbox}{Bypass \& Contact Factor}{ضریب کنارگذر و ضریب تماس}
-\[
-\mathrm{BF}=\frac{T_{out}-T_{coil}}{T_{in}-T_{coil}}
-\qquad
-\mathrm{CF}=\frac{T_{in}-T_{out}}{T_{in}-T_{coil}}
-\qquad
-\mathrm{BF}+\mathrm{CF}=1
-\]
-\note{$\mathrm{BF}$: ضریب کنارگذر \;|\; $\mathrm{CF}$: ضریب تماس}
+%=====================================================================
+\topic{2. Tower, HX, Radiation, Valves}{۲. برج، مبدل، تشعشع، شیر}
+
+\begin{secbox}{Cooling Tower Makeup \& TDS}{رابطه TDS و آب جبرانی}
+\[ (Q_{bd}+Q_{ev}+Q_{dr})\,\mathrm{TDS}_{mu}=(Q_{bd}+Q_{dr})\,\mathrm{TDS}_{max} \]
+\[ Q_{mu}=Q_{ev}+Q_{bd}+Q_{dr} \]
+\note{$Q_{bd}$: تخلیه \pa{blowdown} \;|\; $Q_{ev}$: تبخیر \;|\; $Q_{dr}$: فرار رطوبت \pa{drift} \;|\; $\mathrm{TDS}_{mu}$: آب جبرانی \pa{min} \;|\; $\mathrm{TDS}_{max}$: حد مجاز \pa{max}}
 \end{secbox}
 
-\begin{secbox}{Cooling Coil Efficiency}{راندمان کویل سرمایشی}
-\[
-\eta=\frac{T_{in}-T_{out}}{T_{in}-T_{adp}}
-\]
-\note{$T_{adp}$: دمای نقطه شبنم دستگاه}
+\begin{secbox}{Cooling Tower Efficiency}{راندمان برج خنک‌کن}
+\[ \eta=\frac{T_{in}-T_{out}}{T_{in}-T_{wb}}=\frac{\text{Range}}{\text{Range}+\text{Approach}} \]
+\note{$\text{Range}=T_{in}-T_{out}$ \;|\; $\text{Approach}=T_{out}-T_{wb}$}
+\warn{جزوه $\eta=\frac{\text{Range}}{\text{Approach}}=\frac{T_{in}-T_{out}}{T_{out}-T_{wb}}$ نوشته است؛ این نسبت می‌تواند بزرگ‌تر از ۱ شود و راندمان نیست. فرم درست در کادر بالا آمده.}
 \end{secbox}
 
-\begin{secbox}{Effective Sensible Heat Factor}{ضریب گرمای محسوس مؤثر}
-\[
-\mathrm{ESHF}=\frac{\mathrm{ERSH}}{\mathrm{ERSH}+\mathrm{ERLH}}
-\]
-\[
-\begin{cases}
-\mathrm{ERSH}=\mathrm{RSH}+\mathrm{BF}\times \mathrm{OASH}\\[2pt]
-\mathrm{ERLH}=\mathrm{RLH}+\mathrm{BF}\times \mathrm{OALH}
-\end{cases}
-\]
-\note{$\mathrm{ERSH}$: گرمای محسوس مؤثر اتاق \;|\; $\mathrm{ERLH}$: گرمای نهان مؤثر اتاق}
+\begin{secbox}{Counterflow HX Area}{مبدل جریان مخالف}
+\[ A_1\,\Delta T_{lm,1}=A_2\,\Delta T_{lm,2},\qquad
+\Delta T_{lm}=\frac{\Delta T_2-\Delta T_1}{\ln(\Delta T_2/\Delta T_1)} \]
+\note{تغییر سطح انتقال حرارت با تغییر دماها در دو حالت \pa{به شرط ثابت بودن $Q$ و $U$}}
 \end{secbox}
 
-\begin{secbox}{Room \& Outdoor-Air Loads}{بارهای اتاق و هوای بیرون}
-\[
-\begin{cases}
-\mathrm{RSH}=1.08\,\mathrm{CFM}\,(T_{room}-T_{in})\\[2pt]
-\mathrm{RLH}=0.68\,\mathrm{CFM}\,(W_{room}-W_{in})
-\end{cases}
-\]
-\note{$\mathrm{RSH}$: گرمای محسوس اتاق \;|\; $\mathrm{RLH}$: گرمای نهان اتاق}
-\[
-\begin{cases}
-\mathrm{OASH}=1.08\,\mathrm{CFM}\,(T_{out}-T_{room})\\[2pt]
-\mathrm{OALH}=0.68\,\mathrm{CFM}\,(W_{out}-W_{room})
-\end{cases}
-\]
-\note{$\mathrm{OASH}$: گرمای محسوس هوای بیرون \;|\; $\mathrm{OALH}$: گرمای نهان بخار هوای بیرون}
+\begin{secbox}{Radiation Heat Transfer}{انتقال حرارت تشعشعی}
+\[ q=\varepsilon\,\sigma\,A\,(T_s^4-T_{sur}^4),\qquad \sigma=5.67\times10^{-8}\ \tfrac{\mathrm{W}}{\mathrm{m^2K^4}} \]
+\note{$A$ بر حسب m$^2$ \;|\; دماها بر حسب کلوین}
+\warn{جزوه $q=5.67\times10^{-8}A(T_s^4-T_{sur}^4)$ را بدون ضریب گسیل $\varepsilon$ نوشته است؛ این فقط برای جسم سیاه \pa{$\varepsilon=1$} درست است.}
 \end{secbox}
 
-\begin{secbox}{Apparatus (Fan-Coil) Airflow}{دبی حجمی دستگاه \pa{فن کویل}}
-\[
-\mathrm{CFM}=\frac{\mathrm{ERSH}}{1.08\,(T_{room}-T_{adp})\times(1-\mathrm{BF})}
-\]
-\note{$T_{adp}$: دمای نقطه شبنم دستگاه \;|\; $T_{room}$: دمای اتاق}
+\begin{secbox}{Valve Flow Coefficient}{ضریب جریان شیرها}
+\[ Q\ (\mathrm{m^3/h})=K_v\sqrt{\Delta P\ (\mathrm{bar})}\qquad \text{SI} \]
+\[ Q\ (\mathrm{gpm})=C_v\sqrt{\Delta P\ (\mathrm{psi})}\qquad \text{\fa{آمریکایی}} \]
+\[ \text{\fa{موازی:}}\ K_{v,T}=K_{v1}+K_{v2}\qquad \text{\fa{سری:}}\ K_{v,T}=\frac{K_{v1}K_{v2}}{\sqrt{K_{v1}^2+K_{v2}^2}} \]
+\warn{در جزوه برای حالت آمریکایی هم $K_v$ نوشته شده؛ نماد درست $C_v$ است \pa{$C_v\approx1.156\,K_v$}. فرمول‌ها برای آب‌اند؛ برای سیال دیگر $Q=K_v\sqrt{\Delta P/SG}$.}
+\end{secbox}
+
+%=====================================================================
+\topic{3. Coils \& Heat Transfer}{۳. کویل و انتقال حرارت}
+
+\begin{secbox}{Energy Recovery System}{سیستم بازیافت انرژی هوارسان}
+\begin{center}\begin{tikzpicture}[scale=0.62,>=Stealth]
+\draw (-0.9,-0.6) rectangle (0.9,0.6); \node at (0,0) {\scriptsize\fa{مبدل بازیافت}};
+\draw (3,-0.3) rectangle (5,1); \node at (4,0.35) {\scriptsize\fa{اتاق}};
+\draw[->] (-2.4,0.3)--(-0.9,0.3); \node[above] at (-1.7,0.3) {\scriptsize $T_{in}$, CFM};
+\draw[->] (0.9,0.3)--(3,0.3); \node[above] at (1.95,0.3) {\scriptsize $T_{in\text{-}room}$};
+\draw[->] (4,-0.3)--(4,-1.3)--(0,-1.3)--(0,-0.6); \node[below] at (2,-1.3) {\scriptsize $T_{out\text{-}room}$};
+\draw[->] (0,0.6)--(0,1.5); \node[right] at (0,1.2) {\scriptsize $T_{out}$};
+\end{tikzpicture}\end{center}
+\[ \eta=\frac{T_{in}-T_{out}}{T_{in}-T_{out\text{-}room}}\times100\% \]
+\note{راندمان سیستم بازیافت انرژی هوارسان \pa{درصدی}}
+\warn{دست‌خط این فرمول \pa{به‌خصوص مخرج و عبارت $\times\eta\%$} واضح نبود و بالا به‌صورت تعریف رایج اثربخشی دمایی نوشته شده است؛ لطفاً با جزوه تطبیق دهید.}
+\end{secbox}
+
+\begin{secbox}{Bypass Factor vs.\ Coil Rows}{ضریب کنارگذر و تعداد ردیف کویل}
+\[ \mathrm{BF}_{new}=\mathrm{BF}_{old}^{\ \left(\frac{N_{new}}{N_{old}}\right)} \]
+\[ \mathrm{BF}_{new}=\mathrm{BF}_{old}^2\ \ \text{\fa{\pa{دو برابر کردن ردیف‌ها}}}\quad \mathrm{BF}_{new}=\sqrt{\mathrm{BF}_{old}}\ \ \text{\fa{\pa{نصف کردن}}} \]
+\note{$N$: تعداد ردیف‌های کویل}
+\end{secbox}
+
+\begin{secbox}{Condensate on Steam Coil}{بخار چگالیده در کویل بخار}
+\[ \dot m_w=\frac{Q_s}{h_{fg}} \]
+\[ \dot m_w\ (\mathrm{lb/h})=\frac{Q_s\ (\mathrm{Btu/h})}{970}\qquad \dot m_w\ (\mathrm{gal/h})=\frac{Q_s\ (\mathrm{Btu/h})}{7923} \]
+\warn{ضرایب ناسازگارند: $970\times8.34=8090$ \pa{نه $7923$}. عدد $7923$ مربوط به $h_{fg}=950$ است \pa{$950\times8.34=7923$}. برای $h_{fg}=970$ از $8090$ استفاده کنید.}
+\end{secbox}
+
+\begin{secbox}{Unit Conversion}{تبدیل واحد دما}
+\[ F=1.8\,C+32\qquad \Delta T_F=1.8\,\Delta T_C \]
+\end{secbox}
+
+\begin{secbox}{Conduction \& Convection}{هدایت و جابه‌جایی}
+\[ Q=A\,U\,\Delta T \]
+\note{$A$: سطح مقطع \;|\; $U$: ضریب انتقال حرارت کلی}
+\[ Q=\frac{K\,A\,\Delta T}{L}=\frac{\Delta T}{R},\qquad R=\frac{L}{KA} \]
+\note{$K$: ضریب هدایت حرارتی \;|\; $A$: سطح مقطع \;|\; $L$: ضخامت دیوار \;|\; $R$: مقاومت}
+\warn{جزوه این فرمول را «شار حرارتی دیوار» نامیده؛ چون $A$ دارد، این نرخ انتقال حرارت $Q$ [W] است. شار حرارتی $q''=K\Delta T/L$ [W/m$^2$] است.}
+\[ U=\frac{1}{\dfrac{1}{h_i}+\dfrac{x_1}{K_1}+\dfrac{x_2}{K_2}+\dfrac{1}{h_o}} \]
+\note{ضریب انتقال حرارت کلی در دیوار مرکب}
+\warn{در جزوه جملات اول و آخر مخرج با $U_i$ و $U_o$ نوشته شده‌اند؛ این‌ها ضرایب جابه‌جایی سطح \pa{$h_i,h_o$} هستند.}
+\end{secbox}
+
+\begin{secbox}{Hydraulic Diameter}{قطر هیدرولیکی کانال مستطیلی}
+\[ D_h=\frac{4A}{P}=\frac{2ab}{a+b} \]
+\note{$A$: سطح مقطع \;|\; $P$: محیط خیس‌شده}
+\warn{جزوه $D_h=2A/P$ نوشته است؛ با $P$ برابر محیط کامل \pa{$2(a+b)$} فرمول درست $4A/P$ است. فرم $2A/P$ فقط وقتی درست است که $P$ نصف محیط باشد.}
+\end{secbox}
+
+\begin{secbox}{Electrical Equipment Load}{بار تجهیزات برقی}
+\[ Q=(1-\eta)\,P\,\eta_1\,\eta_2\quad[\mathrm{kW}] \]
+\note{$P$: توان نامی \;|\; $\eta$: راندمان \;|\; $\eta_1$: ضریب زمان روشن ماندن در یک بازه \pa{بین صفر و یک} \;|\; $\eta_2$: ضریب میزان بارگذاری \pa{بین صفر و یک}}
+\warn{$(1-\eta)P$ وقتی درست است که $P$ توان ورودی الکتریکی باشد. اگر $P$ توان خروجی \pa{شفت} باشد، تلفات موتور $P(1-\eta)/\eta$ است \pa{فن و موتور داخل فضا: $P/\eta$}.}
+\end{secbox}
+
+%=====================================================================
+\topic{4. Refrigeration \& Cycles}{۴. تبرید و سیکل‌ها}
+
+\begin{secbox}{COP and EER}{ضریب عملکرد COP و EER}
+\[ \mathrm{COP}=\frac{Q_L}{Q_H-Q_L}\ \ \text{\fa{بر حسب وات}}\qquad \mathrm{EER}=\frac{Q_L}{Q_H-Q_L}\ \ \text{\fa{بر حسب Btu/hr}} \]
+\begin{tcolorbox}[colback=softred,colframe=redn,boxrule=0.5pt,arc=1.5pt,left=2pt,right=2pt,top=0pt,bottom=0pt]
+\[ \mathrm{EER}=3.413\ \mathrm{COP},\qquad 1\ \mathrm{W}=3.413\ \mathrm{Btu/hr} \]
+\end{tcolorbox}
+\note{بازده چیلر در بار کامل}
+\warn{COP بدون بُعد است؛ EER برابر ظرفیت سرمایش \pa{Btu/hr} تقسیم بر توان مصرفی \pa{W} است. در جزوه هر دو با یک عبارت نوشته شده و تنها واحد فرق می‌کند؛ $Q_H-Q_L$ همان کار کمپرسور $W$ است.}
+\end{secbox}
+
+\begin{secbox}{SEER}{نسبت بازده انرژی فصلی}
+\[ \mathrm{SEER}=\frac{Q_{L,\,season}}{E_{c}\ \text{\fa{\pa{W·h}}}} \]
+\note{$E_c$: مجموع انرژی الکتریکی مصرفی \;|\; واحد: Btu/\pa{W·h}}
+\warn{جزوه $\mathrm{SEER}=Q_L/P_c$ با واحد Btu/year نوشته است؛ SEER نسبت کل سرمایش فصلی \pa{Btu} به کل انرژی الکتریکی مصرفی \pa{W·h} است و واحدش Btu/\pa{W·h} است.}
+\end{secbox}
+
+\begin{secbox}{Carnot Cycle}{سیکل کارنو}
+\[ \mathrm{COP}_{cool}=\frac{T_L}{T_H-T_L}\qquad \mathrm{COP}_{heat}=\frac{T_H}{T_H-T_L} \]
+\note{$T_L$: دمای مطلق منبع سرد \pa{سرمایش: داخل \;|\; گرمایش: بیرون ساختمان} \;|\; $T_H$: دمای مطلق منبع گرم \pa{سرمایش: بیرون \;|\; گرمایش: داخل ساختمان}}
+\end{secbox}
+
+\begin{secbox}{Water $\Delta T$ in Fan-Coil Loops}{اختلاف دمای آب در مدارها}
+\[ \text{\fa{سرمایش:}}\ \Delta T=10^\circ\mathrm{F}\approx5.6^\circ\mathrm{C}\qquad \text{\fa{گرمایش:}}\ \Delta T=20^\circ\mathrm{F}\approx11^\circ\mathrm{C} \]
+\warn{در جزوه $20^\circ\mathrm{F}$ معادل $15^\circ\mathrm{C}$ نوشته شده؛ تبدیل درست \pa{$\Delta T_C=\Delta T_F/1.8$} حدود $11^\circ\mathrm{C}$ است. عنوان این بخش در دست‌خط واضح نبود.}
+\end{secbox}
+
+\begin{secbox}{Compression Ratio}{نسبت تراکم در کمپرسور}
+\[ r=\frac{P_{abs,dis}}{P_{abs,suc}}=\frac{P_{g,dis}+14.7\ \mathrm{psi}}{P_{g,suc}+14.7\ \mathrm{psi}} \]
+\end{secbox}
+
+\begin{secbox}{Standard Conditions}{شرایط استاندارد}
+\[ P=101.325\ \mathrm{kPa};\quad T=20^\circ\mathrm{C};\quad \rho=1.2\ \mathrm{kg/m^3} \]
+\end{secbox}
+
+\begin{secbox}{Return Fan Condition}{شرط استفاده از فن برگشت}
+\ptext{فن برگشت هوا در هوارسان لازم است وقتی افت فشار استاتیک کانال‌های برگشتی هوا بیش از $0.25$ اینچ ستون آب باشد یا هوارسان به … \pa{ادامهٔ جمله در دست‌خط خوانا نبود}.}
+\end{secbox}
+
+%=====================================================================
+\topic{5. Fans}{۵. فن‌ها}
+
+\begin{secbox}{Fan Laws -- Flow \& Speed}{روابط تشابهی فن‌ها}
+\[ \frac{\mathrm{CFM}_2}{\mathrm{CFM}_1}=\frac{rpm_2}{rpm_1}=\frac{Pd_2}{Pd_1} \]
+\note{$\mathrm{CFM}$: حجم هوادهی \;|\; $rpm$: دور فن \;|\; $Pd$: قطر پولی موتور}
+\end{secbox}
+
+\begin{secbox}{Fan Laws -- Static Pressure}{فشار استاتیکی}
+\[ \frac{SP_2}{SP_1}=\Big(\frac{rpm_2}{rpm_1}\Big)^{2}=\Big(\frac{\mathrm{CFM}_2}{\mathrm{CFM}_1}\Big)^{2}=\Big(\frac{Pd_2}{Pd_1}\Big)^{2} \]
+\end{secbox}
+
+\begin{secbox}{Fan Laws -- Brake Power}{توان حقیقی}
+\[ \frac{bhp_2}{bhp_1}=\Big(\frac{rpm_2}{rpm_1}\Big)^{3}=\Big(\frac{\mathrm{CFM}_2}{\mathrm{CFM}_1}\Big)^{3}=\Big(\frac{Pd_2}{Pd_1}\Big)^{3}=\sqrt{\Big(\frac{SP_2}{SP_1}\Big)^{3}} \]
+\[ \frac{bhp_2}{bhp_1}=\Big(\frac{D_2}{D_1}\Big)^{5} \]
+\note{$D$: قطر پروانه \pa{wheel} فن \;|\; رابطهٔ $D^5$ در دور و چگالی ثابت}
+\warn{در جزوه برچسب این رابطه «قطر پولی فن» خوانده می‌شد؛ در قانون $D^5$ منظور قطر پروانه \pa{impeller} فن است نه قطر پولی.}
+\end{secbox}
+
+\begin{secbox}{Density Change}{تغییرات چگالی}
+\[ \frac{SP_2}{SP_1}=\frac{\rho_2}{\rho_1}\qquad \frac{bhp_2}{bhp_1}=\frac{\rho_2}{\rho_1} \]
+\note{$\rho$ بر حسب lb/ft$^3$ \;|\; در دور و دبی ثابت}
+\ptext{نکته: بازده کل فن در نقطهٔ طراحی حداکثر باید ۱۵ درصد از حداکثر بازده کل فن کمتر باشد.}
+\end{secbox}
+
+\begin{secbox}{Fan Power Chain -- SI}{توان‌های فن (SI)}
+\[ HP=\rho g h Q\qquad BHP=\frac{\rho g h Q}{\eta_m}\qquad THP=\frac{\rho g h Q}{\eta_m\eta_e} \]
+\note{$\rho=1.2\ \mathrm{kg/m^3}$ \;|\; $h$ بر حسب m \;|\; $Q$ بر حسب m$^3$/s \;|\; $\eta_m$: راندمان مکانیکی \;|\; $\eta_e$: راندمان موتور}
+\end{secbox}
+
+\begin{secbox}{Fan Power Chain -- IP}{توان‌های فن (IP)}
+\[ HP=\frac{Q\,h}{6356}\qquad BHP=\frac{Q\,\Delta P_s}{6356\,\eta_m}\qquad THP=\frac{Q\,h}{6356\,\eta_m\eta_e} \]
+\note{$Q$ بر حسب CFM \;|\; $h$ و $\Delta P_s$ بر حسب in\,H$_2$O}
+\begin{tcolorbox}[colback=softred,colframe=redn,boxrule=0.5pt,arc=1.5pt,left=2pt,right=2pt,top=0pt,bottom=0pt]
+\[ THP>BHP>HP \]
+\end{tcolorbox}
+\note{توان کل \pa{الکتریکی} > توان ترمزی \pa{شفت} > توان مفید}
+\[ THP=\frac{BHP}{\eta_e},\qquad BHP=\frac{P_{ow}}{\eta_m} \]
+\note{$P_{ow}$: توان مفید \pa{هیدرولیکی}}
+\warn{در جزوه $BHP=Q\Delta P_s/(6356\,\eta_m)$ آمده؛ فشار استاتیکی با راندمان «کل» ترکیب شده. فرم درست: $BHP=\dfrac{Q\,\Delta P_s}{6356\,\eta_s}=\dfrac{Q\,\Delta P_t}{6356\,\eta_m}$.}
+\end{secbox}
+
+\begin{secbox}{Fan Tip Speed \& Pulleys}{سرعت نوک فن و پولی‌ها}
+\[ V=\pi N D \]
+\note{$V$: ft/min \;|\; $N$: RPM \;|\; $D$: ft \pa{سرعت خطی نوک فن}}
+\[ RPM_{motor}\cdot d_{motor}=RPM_{fan}\cdot D_{fan} \]
+\note{تغییر قطر پولی موتور و پولی فن}
+\end{secbox}
+
+\begin{secbox}{Belt Length}{کشیدگی تسمه}
+\[ L=2C+1.57\,(D+d)+\frac{(D-d)^2}{4C} \]
+\note{$L$: طول تسمهٔ مناسب \;|\; $C$: فاصلهٔ مرکز تا مرکز پولی‌ها}
+\end{secbox}
+
+\begin{secbox}{Fan Pressures \& Efficiency}{فشارها و راندمان فن}
+\[ TP_F=SP_F+VP_F \]
+\note{فشار کل فن \;|\; فشار استاتیکی فن \;|\; فشار سرعتی \pa{دینامیکی} فن}
+\[ \eta_s=\eta_m\frac{\Delta P_s}{\Delta P_T}=\frac{\mathrm{CFM}\,\Delta P_s}{6356\,bhp} \]
+\note{رابطهٔ راندمان مکانیکی و راندمان استاتیکی}
+\[ \Delta P_s=P_{s2}-P_{s1},\qquad \Delta P_t=P_{t2}-P_{t1} \]
+\note{اندیس ۱: ورودی \pa{مکش} فن \;|\; اندیس ۲: خروجی فن}
+\[ N_s=\frac{RPM\sqrt{\mathrm{CFM}}}{h^{3/4}} \]
+\note{سرعت مخصوص در فن‌ها و پمپ‌ها \;|\; برای پمپ: $Q$ بر حسب gpm \;|\; $h$ بر حسب in\,w \pa{افت هد}}
+\end{secbox}
+
+%=====================================================================
+\topic{6. Fluid Basics}{۶. مبانی مکانیک سیالات}
+
+\begin{secbox}{Mass \& Volume Flow, Continuity}{دبی جرمی و حجمی، پیوستگی}
+\[ \dot m=\rho\,V\,A\ \ [\mathrm{kg/s}] \]
+\[ Q=\dot V=\frac{\dot m}{\rho}=V\,A\ \ [\mathrm{m^3/s}] \]
+\ptext{قانون پیوستگی: دبی جرمی عبوری از یک کانال یا لوله ثابت است \pa{$A_2<A_1\Rightarrow V_2>V_1$، $\dot m_1=\dot m_2$}. دبی حجمی فقط در جریان تراکم‌ناپذیر \pa{$\rho$ ثابت} ثابت می‌ماند.}
+\end{secbox}
+
+\begin{secbox}{Friction Pressure Drop}{افت فشار ناشی از اصطکاک}
+\[ \Delta P=\frac{f\,L}{D}\cdot\frac{\rho V^2}{2} \]
+\ptext{ضریب اصطکاک $f$ از نمودار مودی بر اساس عدد رینولدز $Re$ و زبری نسبی $\varepsilon/D$ \pa{مثلاً منحنی‌های $0.1$، $0.01$، $0.001$} به‌دست می‌آید. در جزوه فقط برای آموزش آمده؛ در محاسبات از تقریب استفاده می‌شود نه از نمودار.}
+\end{secbox}
+
+%=====================================================================
+\topic{7. Pumps}{۷. پمپ‌ها}
+
+\begin{secbox}{Pump Power -- SI}{توان پمپ (SI)}
+\begin{tcolorbox}[colback=yellow!12,colframe=orange!70!black,boxrule=0.4pt,arc=1.5pt,left=2pt,right=2pt,top=0pt,bottom=0pt]
+\[ P=\rho\,g\,Q\,H\ \ [\mathrm{W}] \]
+\end{tcolorbox}
+\note{توان مفید \;|\; $\rho$ [kg/m$^3$] \;|\; $g=9.81$ m/s$^2$ \;|\; $Q$ [m$^3$/s] \;|\; $H$ هد [m]}
+\[ P_B=\frac{\rho g Q H}{\eta_p}\ \text{\fa{\pa{توان ترمزی}}}\qquad P_T=\frac{\rho g Q H}{\eta_p\,\eta_m}\ \text{\fa{\pa{توان مصرفی الکتروموتور}}} \]
+\note{$\eta_p$: راندمان پمپ \;|\; $\eta_m$: راندمان موتور}
+\end{secbox}
+
+\begin{secbox}{Pump Power -- IP}{توان پمپ (IP)}
+\[ P=\frac{Q\,H}{3960}\ \ [\mathrm{HP}]\qquad BHP=\frac{Q\,H}{3960\,\eta_p}\qquad P_T=\frac{Q\,H}{3960\,\eta_p\,\eta_m} \]
+\note{$Q$ بر حسب gpm \;|\; $H$ بر حسب ft \;|\; $P$ بر حسب اسب بخار \;|\; برای آب}
+\[ Q\ (\mathrm{GPM})=\frac{\mathrm{BTU/hr}}{500\,\Delta T\,(^\circ\mathrm{F})},\qquad \dot V=\frac{Q}{\rho\,c_p\,\Delta T}\ \text{\fa{\pa{SI}}} \]
+\note{$\Delta T=20^\circ\mathrm{F}$ گرمایش \;|\; $\Delta T=10^\circ\mathrm{F}$ سرمایش}
+\end{secbox}
+
+\begin{secbox}{Pump Affinity Laws}{قوانین حاکم بر پمپ‌ها}
+\[ \frac{\dot m_2}{\dot m_1}=\frac{\rho_2}{\rho_1}\cdot\frac{n_2}{n_1}\cdot\Big(\frac{d_2}{d_1}\Big)^{3} \]
+\[ \frac{P_2}{P_1}=\frac{\rho_2}{\rho_1}\Big(\frac{n_2}{n_1}\Big)^{2}\Big(\frac{d_2}{d_1}\Big)^{2} \]
+\[ \frac{HP_2}{HP_1}=\frac{\rho_2}{\rho_1}\Big(\frac{n_2}{n_1}\Big)^{3}\Big(\frac{d_2}{d_1}\Big)^{5} \]
+\note{$\dot m$: دبی جرمی \;|\; $n$: دور پمپ \;|\; $P$: فشار \;|\; $\rho$: چگالی \;|\; $d$: قطر پروانه \;|\; $HP$: توان مصرفی}
+\[ \frac{Q_2}{Q_1}=\frac{\Delta T_1}{\Delta T_2}\qquad \frac{HP_2}{HP_1}=\Big(\frac{\Delta T_1}{\Delta T_2}\Big)^{3} \]
+\note{برای بار حرارتی ثابت \pa{$Q=\dot m c\,\Delta T$}}
+\warn{در جزوه رابطهٔ دبی بدون توان نوشته شده؛ باید $(d_2/d_1)^3$ باشد. در رابطهٔ توان هم توان $d$ برابر $3$ نوشته شده؛ مقدار درست $5$ است \pa{مثل قانون فن‌ها}.}
+\end{secbox}
+
+\begin{secbox}{Parallel \& Series Pumps}{پمپ‌های موازی و سری}
+\begin{center}\begin{tikzpicture}[scale=0.5,>=Stealth]
+% parallel
+\begin{scope}
+\draw[->] (0,0)--(5.6,0) node[right]{\scriptsize $Q$};
+\draw[->] (0,0)--(0,4) node[above]{\scriptsize $H$};
+\draw[gray,thick,domain=0:5.4,smooth,variable=\x] plot ({\x},{3.6-0.12*\x*\x});
+\draw[navy,thick,domain=0:8.9,smooth,variable=\x] plot ({\x*0.6},{3.6-0.03*\x*\x});
+\draw[redn,thick,domain=0:8,smooth,variable=\x] plot ({\x*0.6},{0.4+0.045*\x*\x});
+\node[below] at (2.4,-0.2) {\scriptsize \fa{موازی}};
+\end{scope}
+% series
+\begin{scope}[xshift=7.5cm]
+\draw[->] (0,0)--(5.6,0) node[right]{\scriptsize $Q$};
+\draw[->] (0,0)--(0,4.4) node[above]{\scriptsize $H$};
+\draw[gray,thick,domain=0:5.4,smooth,variable=\x] plot ({\x},{3.6-0.12*\x*\x});
+\draw[navy,thick,domain=0:5.4,smooth,variable=\x] plot ({\x},{7.2-0.24*\x*\x});
+\draw[redn,thick,domain=0:5.1,smooth,variable=\x] plot ({\x},{0.4+0.14*\x*\x});
+\node[below] at (2.4,-0.2) {\scriptsize \fa{سری}};
+\end{scope}
+\end{tikzpicture}\end{center}
+\note{خاکستری: یک پمپ \;|\; آبی: ترکیب دو پمپ \;|\; قرمز: منحنی سیستم}
+\[ \text{\fa{موازی:}}\ Q_T=2Q\qquad\qquad \text{\fa{سری:}}\ H_T=2H \]
+\note{$Q$: دبی هر پمپ تکی \;|\; $Q_T$: دبی خروجی \;|\; $H$: هد هر پمپ تکی \;|\; $H_T$: هد خروجی \;|\; در موازی هر پمپ نیمی از جریان و در سری هر پمپ نیمی از فشار را تأمین می‌کند.}
+\begin{tcolorbox}[colback=softred,colframe=redn,boxrule=0.5pt,arc=1.5pt,left=2pt,right=2pt,top=0pt,bottom=0pt,title={\fa{نکتهٔ جمع‌بندی}},fonttitle=\small,coltitle=redn,colbacktitle=softred]
+\[ \text{\fa{معادلهٔ هد دو پمپ موازی:}}\ H=f\!\left(\tfrac{Q}{2}\right)\qquad \text{\fa{دو پمپ سری:}}\ H=2\,f(Q) \]
+\end{tcolorbox}
+\ptext{در معادلهٔ تک‌پمپ، برای موازی به‌جای $Q$ مقدار $Q/2$ جایگزین می‌شود و برای سری معادلهٔ تک‌پمپ در $2$ ضرب می‌شود.}
+\warn{این روابط برای پمپ‌های یکسان‌اند و نقطهٔ کار واقعی تقاطع با منحنی سیستم است؛ پس در موازی دبی کل کمتر از دو برابر دبی تک‌پمپ و در سری هد کل کمتر از دو برابر هد تک‌پمپ می‌شود \pa{مطابق شکل}.}
+\end{secbox}
+
+\begin{secbox}{Selecting Parallel \& Series Pumps}{انتخاب پمپ‌های موازی و سری}
+\ptext{موازی: با موازی کردن دو پمپ دبی افزایش می‌یابد ولی دو برابر نمی‌شود؛ نقطهٔ کار از نقطهٔ تک‌پمپ به نقطهٔ ترکیبی منتقل می‌شود. بهترین حالت زمانی است که BEP هر پمپ در نقطهٔ کار خودش \pa{نصف دبی خروجی منیفولد} باشد.}
+\ptext{سری: هد تقریباً مجموع هد پمپ‌ها می‌شود. بهترین حالت وقتی است که هر پمپ در BEP خود کار کند؛ در این حالت هم هد دو پمپ سری دو برابر حالت اول نمی‌شود.}
+\end{secbox}
+
+\begin{secbox}{Pump Curve, System Curve, Operating Point}{منحنی پمپ و سیستم}
+\begin{center}\begin{tikzpicture}[scale=0.55,>=Stealth]
+\draw[->] (0,0)--(5,0) node[right]{\scriptsize $Q$};
+\draw[->] (0,0)--(0,4) node[above]{\scriptsize $H$};
+\draw[navy,thick,domain=0:4.2,smooth,variable=\x] plot ({\x},{3.6-0.12*\x*\x});
+\draw[redn,thick,domain=0:3.8,smooth,variable=\x] plot ({\x},{0.4+0.14*\x*\x});
+\fill (3.51,2.12) circle (2.5pt);
+\node[right] at (3.6,2.3) {\scriptsize \fa{نقطهٔ عملکرد}};
+\node[navy] at (1.4,3.5) {\scriptsize \fa{منحنی پمپ}};
+\node[redn] at (4.3,3.2) {\scriptsize \fa{منحنی سیستم}};
+\end{tikzpicture}\end{center}
+\ptext{منحنی عملکرد پمپ رابطهٔ هد و دبی را نشان می‌دهد. منحنی سیستم دبی مایع را در برابر هد کلی سیستم نشان می‌دهد. نقطهٔ عملکرد نقطه‌ای است که پمپ از نظر دبی و هد در آن کار می‌کند.}
+\ptext{\textbf{BEP}: نقطه‌ای از منحنی عملکرد \pa{هد و دبی} که راندمان به حداکثر خود می‌رسد. \textbf{NPSH}: مقدار ارتفاع مکش مثبت خالص پمپ.}
+\end{secbox}
+
+\begin{secbox}{System Head (Centrifugal Pumps)}{هد پمپ‌های گریز از مرکز}
+\[ H_{sys}=H_{static}+H_{friction}+H_{req} \]
+\note{$H_{static}$: ارتفاع محل دریافت سیال \;|\; $H_{friction}$: هد اصطکاکی \;|\; $H_{req}$: هد مورد نیاز لوازم بهداشتی}
+\[ H_{friction}\approx0.075\,L=1.5\,L\times0.05 \]
+\note{$L$: طول مسیر لوله‌کشی \pa{به متر} \;|\; ضریب $1.5$ برای افت‌های موضعی \pa{شیر، سه‌راهی، زانو و…} و $3$ تا $5$ درصد برای اصطکاک}
+\ptext{$H_{req}$: از جدول مبحث ۱۶ فشار مورد نیاز استخراج و به متر آب تبدیل می‌شود. جمع دبی‌های مورد نیاز تک‌تک لوازم بهداشتی ساختمان دبی پمپ را می‌دهد.}
+\end{secbox}
+
+\begin{secbox}{Collector Circuit Pump}{هد پمپ‌های مسیر کلکتور}
+\[ H_p=H_{friction}+H_{last\ terminal}+H_{boiler\ room} \]
+\[ H_p\approx0.075\,L\quad \text{\fa{\pa{از ارتفاع ایستایی صرف‌نظر می‌شود}}} \]
+\ptext{در مدار بستهٔ کلکتور طول مسیر برگشت هم باید در محاسبهٔ افت اصطکاکی لحاظ شود. هد پمپ پس از جمع $H_{friction}$ و هد آخرین وسیلهٔ حرارتی و هد موردنیاز از داخل موتورخانه به‌دست می‌آید.}
+\end{secbox}
+
+\begin{secbox}{Pump Applications}{کاربرد پمپ‌ها}
+\ptext{اغلب پمپ‌ها برای دو منظور به کار می‌روند: ۱) گردش سیال در یک مدار بسته \pa{مثل آب در گردش در موتورخانه}؛ ۲) جابه‌جایی سیال از یک نقطه به نقطهٔ دیگر \pa{انتقال از تانک ذخیره به شبکهٔ لوله‌کشی و تأسیسات مصرفی}.}
+\ptext{در شکل جزوه: هد کل پمپ از تراز تانک پایین تا تانک بالا شامل هد مکش و هد تخلیه است.}
+\end{secbox}
+
+\begin{secbox}{Cooling Tower Pump Head}{هد پمپ برج خنک‌کن}
+\ptext{در محاسبهٔ هد پمپ مدار برج خنک‌کن فقط ارتفاع تشت آب تا نازل‌ها \pa{$h$ در شکل} لحاظ می‌شود و بقیهٔ ارتفاع‌ها صفر در نظر گرفته می‌شود.}
+\ptext{اختلاف فشار قطع و وصل پمپ: مثلاً اگر پمپ در $30$ m وصل و در $35$ m خاموش شود، اختلاف $5$ m سکون آب است که پمپ برای غلبه بر آن نیاز به محاسبه دارد و باید به هد خروجی اضافه شود. اگر پمپ دور متغیر و فشار خروجی ثابت باشد، این عدد صفر می‌شود.}
+\ptext{وقتی شیر آب مصرفی بسته می‌شود، آب ساکن است و افت اصطکاک صفر می‌شود؛ پس فشار پشت شیر برابر فشار لازم \pa{از جدول مبحث ۱۶} به‌علاوهٔ فشار اصطکاک است. \pa{این بند به‌دلیل کیفیت دست‌خط تقریبی خوانده شده است}}
+\end{secbox}
+
+\begin{secbox}{NPSH \& Cavitation}{NPSH و کاویتاسیون}
+\ptext{برای جلوگیری از کاویتاسیون باید $NPSH_a$ \pa{در دسترس} بیشتر از $NPSH_r$ \pa{مورد نیاز} باشد. افزایش دما $NPSH_a$ را کاهش می‌دهد؛ پس با افزایش دما باید ارتفاع مکش \pa{هد مکش مثبت} یا فشار ورودی را افزایش دهیم. بنا بر توصیهٔ سازندگان $NPSH_a$ باید حداقل $0.5$ متر از $NPSH_r$ بیشتر باشد. انتخاب پمپ فقط باید بر اساس دبی و هد مورد نیاز انجام شود.}
+\[ NPSH_a\ \ge\ NPSH_r+0.5\ \mathrm{m} \]
+\end{secbox}
+
+\begin{secbox}{Max Suction Depth}{حداکثر عمق مکش پمپ}
+\[ Z_{s,max}=\frac{P_{atm}}{\rho g}-\Big\{NPSH_R+\frac{P_v}{\rho g}+h_f\Big\}\ \ [\mathrm{m}] \]
+\begin{tcolorbox}[colback=softred,colframe=redn,boxrule=0.5pt,arc=1.5pt,left=2pt,right=2pt,top=0pt,bottom=0pt,title={\fa{برای پمپ آب (تقریبی)}},fonttitle=\small,coltitle=redn,colbacktitle=softred]
+\[ Z_{s,max}=P_a-NPSH_R-\frac{P_v}{9800}-H_F \]
+\end{tcolorbox}
+\note{$P_a=10.34$ m \pa{هد فشار جو} \;|\; $NPSH_R$: ارتفاع مکش مورد نیاز \;|\; $P_v$ [Pa]: فشار بخار \pa{مطلق} \;|\; $H_F$: هد اصطکاکی}
+\[ Z_{s,max}=H_a-(NPSH_R+0.5)-H_v-H_F \]
+\ptext{حداکثر مکش استاتیکی برای پمپ آب \pa{حالت ایدئال}:}
+\[ Z_{s,max}=H_a\ \Longleftrightarrow\ NPSH_R+H_v+H_F=0 \]
+\note{عمق مکش برای پمپ آب از $10$ m بیشتر نشود \pa{مکش ایدئال}}
+\warn{در جزوه این رابطه با $NPSH_A+0.5$ نوشته شده؛ $NPSH_A$ خروجی محاسبه است نه ورودی. چون باید $NPSH_A\ge NPSH_R+0.5$ باشد، عبارت درست $NPSH_R+0.5$ است \pa{در کادر بالا}. همچنین در رابطهٔ دوم $P_a$ باید هد فشار جو بر حسب متر باشد \pa{$10.34$ m} و $P_v/9800$ هم متر است.}
 \end{secbox}
 
 \end{multicols}
+
+%=====================================================================
+\begin{tcolorbox}[enhanced,colback=orange!6,colframe=orange!80!black,boxrule=0.6pt,arc=2pt,left=4pt,right=4pt,top=2pt,bottom=2pt,title={\hbox to \hsize{\sffamily\bfseries Hard-to-read items\hfill\fa{\bfseries مواردی که دست‌خط آن‌ها واضح نبود}}},fonttitle=\small,coltitle=warnfg,colbacktitle=orange!15]
+\ptext{۱) تعریف $\lambda$ در فرمول‌های $Q_S$ و $Q_L$ \pa{ضریب تصحیح ارتفاع فرض شد}. ۲) فرمول راندمان سیستم بازیافت انرژی. ۳) عنوان بخش اختلاف دمای آب در مدارها. ۴) ادامهٔ جملهٔ شرط فن برگشت. ۵) کلمهٔ «تخلیه» در رابطهٔ TDS. ۶) متن نکتهٔ مربوط به فشار پشت شیر مصرفی. ۷) مرجع هایلایت‌شده \pa{صفحه ۷۶، مبحث ۱۶؟} کنار $Q=AU\Delta T$. ۸) برچسب‌های روی نمودار انتخاب پمپ‌های موازی و سری \pa{نقاط A تا D}.}
+\end{tcolorbox}
+
 \end{document}
