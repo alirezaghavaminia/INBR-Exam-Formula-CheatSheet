@@ -69,9 +69,9 @@
 \pagestyle{empty}
 \setlength{\abovedisplayskip}{2pt}\setlength{\belowdisplayskip}{2pt}\setlength{\abovedisplayshortskip}{1pt}\setlength{\belowdisplayshortskip}{1pt}
 \begin{center}
-  {\color{navy}\LARGE\bfseries\sffamily HVAC Formulas \,--\, SI \& IP Edition}\\[1pt]
+  {\color{navy}\LARGE\bfseries\sffamily Mechanic Eng. Formulas For INBR Exam \,--\, SI \& IP Edition}\\[1pt]
   {\color{redn}\large \fa{\bfseries
-  		 برگهٔ کامل فرمول‌ها نسخهٔ SI و IP و ضرایب}}\\[1pt]
+  		 برگه فرمول برای آزمون نظام مهندسی مکانیک نسخهٔ SI و IP و ضرایب}}\\[1pt]
   {\small\fa{\color{warnfg}
   		هر فرمول با برچسب
   		 \lt{SI}
@@ -448,6 +448,20 @@ $\mathrm{SHF}$ & \multicolumn{4}{l}{{\color{redn}$\text{--}$}}                  
 \end{tabular*}}
 \end{secbox}
 
+\begin{secbox}{Boiler Fuel Consumption}{مصرف سوخت دیگ}
+	\ptext{
+		مقدار مصرف سوخت دیگ بر اساس ظرفیت حرارتی بویلر، ارزش حرارتی سوخت و راندمان آن تعیین می‌شود.}
+	\ver{SI/IP}{Q=\dot{m}L \rightarrowtail \dot{m} = \frac{Q_i}{L}}
+	\ver{SI/IP}{Q_i= \frac{Q_B}{\eta}}
+	\par\vspace{1pt}{\small\noindent
+		\begin{tabular*}{\linewidth}{@{}l@{\hspace{1.2em}}l@{\hspace{0.4em}}l@{\hspace{1.2em}}l@{\hspace{0.4em}}l@{\extracolsep{\fill}}r@{}}
+			$Q,Q_i,Q_B$  & {\color{redn}\textsf{\bfseries SI}} & {\color{redn}$\mathrm{kW}$} & {\color{redn}\textsf{\bfseries IP}} & {\color{redn}$\mathrm{Btu/hr}$} & \fa{ظرفیت حرارتی، ظ.ح. ورودی، ظ. ح. بویلر}\\
+			$L$           & {\color{redn}\textsf{\bfseries SI}} & {\color{redn}$\mathrm{kJ/kg}$} & {\color{redn}\textsf{\bfseries IP}} & {\color{redn}$\mathrm{Btu/lb}$} & \fa{ارزش حرارتی سوخت }\\
+			$\mathrm{\eta}$ & \multicolumn{4}{l}{{\color{redn}$\text{--}$}}                                                    & \fa{راندمان بویلر}\\
+	\end{tabular*}}
+\end{secbox}
+
+
 \begin{secbox}{Electrical Equipment Heat Gain}{بار حرارتی تجهیزات برقی}
 \ptext{گرمای تولیدی فن، الکتروموتور و … در فضا. $P$ توان ورودی به تجهیز است. $\eta_1$ نسبت زمان روشن بودن و $\eta_2$ ضریب بارگذاری است؛ هر دو بین $0$ و $1$. تبدیل: $1\ \mathrm{kW}=3412\ \mathrm{Btu/hr}$ و $1\ \mathrm{HP}=2545\ \mathrm{Btu/hr}$.}
 \ver{SI}{Q=(1-\eta)\,P\,\eta_1\eta_2\ \ [\mathrm{kW}]}
@@ -499,6 +513,19 @@ $T$                       & {\color{redn}\textsf{\bfseries SI}} & {\color{redn}$
 \warn{برای رطوبت نسبی RH نمی‌توان از میانگین وزنی استفاده کرد.}
 \end{secbox}
 
+\begin{secbox}{Fresh Air Fraction}{نسبت هوای تازه به هوای مخلوط}
+	\ptext{
+		رابطه‌ای ساده برای به دست آوردن نسبت هوای تازه (OA) به هوای مخلوط (MA)}
+	\ver{SI/IP}{OA=\frac{T_{MA}-T_{RA}}{T_{OA}-T_{RA}}}
+	\par\vspace{1pt}{\small\noindent
+		\begin{tabular*}{\linewidth}{@{}l@{\hspace{1.2em}}l@{\hspace{0.4em}}l@{\hspace{1.2em}}l@{\hspace{0.4em}}l@{\extracolsep{\fill}}r@{}}
+			%$OA$  & {\color{redn}\textsf{\bfseries SI}} & {\color{redn}--} & {\color{redn}\textsf{\bfseries IP}} & {\color{redn}--} & \fa{نسبت هوای تازه به هوای مخلوط}\\
+			$T_{MA}$ & {\color{redn}\textsf{\bfseries SI}} & {\color{redn}$^\circ\mathrm{C}$} & {\color{redn}\textsf{\bfseries IP}} & {\color{redn}$^\circ\mathrm{F}$} & \fa{دمای هوای مخلوط}\\
+			$T_{RA}$ & {\color{redn}\textsf{\bfseries SI}} & {\color{redn}$^\circ\mathrm{C}$} & {\color{redn}\textsf{\bfseries IP}} & {\color{redn}$^\circ\mathrm{F}$} & \fa{دمای هوای برگشتی از اتاق}\\
+			$T_{OA}$ & {\color{redn}\textsf{\bfseries SI}} & {\color{redn}$^\circ\mathrm{C}$} & {\color{redn}\textsf{\bfseries IP}} & {\color{redn}$^\circ\mathrm{F}$} & \fa{دمای هوای بیرون}\\
+	\end{tabular*}}
+\end{secbox}
+
 \begin{secbox}{Energy Recovery}{بازیافت انرژی هوارسان}
 \ptext{اثربخشی دمایی مبدل بازیافت بین هوای تازه ورودی و هوای برگشتی اتاق؛ هر چه نزدیک‌تر به $100\%$، بازیافت بیشتر.}
 \ver{SI/IP}{\eta=\frac{T_{in}-T_{out}}{T_{in}-T_{ret}}\times100\%}
@@ -541,7 +568,8 @@ $\omega$   & {\color{redn}\textsf{\bfseries SI}} & {\color{redn}$\mathrm{kg/kg}$
 
 \begin{secbox}{Bypass \& Contact Factor}{ضریب کنارگذر و ضریب تماس}
 \ptext{نسبت هوایی که از کویل می‌گذرد بدون تماس \pa{BF} یا در تماس کامل \pa{CF}؛ $\mathrm{BF}+\mathrm{CF}=1$. راندمان کویل همان CF است. دماها دمای خشک‌اند.}
-\ver{SI/IP}{\mathrm{BF}=\frac{T_{out}-T_{coil}}{T_{in}-T_{coil}},\quad \mathrm{CF}=\frac{T_{in}-T_{out}}{T_{in}-T_{coil}}=\frac{T_{in}-T_{out}}{T_{in}-T_{adp}}=\eta}
+\ver{SI/IP}{\mathrm{BF}=\frac{T_{out}-T_{coil}}{T_{in}-T_{coil}}} \ver{SI/IP}{\mathrm{CF}=\frac{T_{in}-T_{out}}{T_{in}-T_{coil}}=\frac{T_{in}-T_{out}}{T_{in}-T_{adp}}=\eta}
+\ver{SI/IP}{T_{out} = T_{coil} + BF (T_{in} - T_{coil})}
 \par\vspace{1pt}{\small\noindent
 \begin{tabular*}{\linewidth}{@{}l@{\hspace{1.2em}}l@{\hspace{0.4em}}l@{\hspace{1.2em}}l@{\hspace{0.4em}}l@{\extracolsep{\fill}}r@{}}
 $T_{in},T_{out}$               & {\color{redn}\textsf{\bfseries SI}} & {\color{redn}$^\circ\mathrm{C}$} & {\color{redn}\textsf{\bfseries IP}} & {\color{redn}$^\circ\mathrm{F}$} & \fa{دمای هوای ورودی و خروجی کویل}\\
@@ -574,7 +602,14 @@ $\omega,W$       & {\color{redn}\textsf{\bfseries SI}} & {\color{redn}$\mathrm{g
 $BF$             & \multicolumn{4}{l}{{\color{redn}$\text{--}$}}                                                      & \fa{ضریب کنارگذر}\\
 $\mathrm{ESHF}$  & \multicolumn{4}{l}{{\color{redn}$\text{--}$}}                                                      & \fa{ضریب گرمای محسوس مؤثر}\\
 \end{tabular*}}
+\warn{	
+	\ptext{در ضرایب کنارگذر کم، می‌توان مقدار ESHF را با رابطه‌ی زیر تقریب زد. اگر گزینه در جواب نبود یا جواب‌ها نزدیک به هم بود از فرمول‌های بالا استفاده کن.}
+		\[
+		\mathrm{\text{ESHF}}\approx \frac{\text{Sensible Heat}}{\text{Total Heat}}
+		\]
+}
 \end{secbox}
+
 
 \begin{secbox}{Apparatus Airflow}{دبی هوای دستگاه}
 \ptext{دبی هوای لازم کویل برای مقابله با بار محسوس مؤثر اتاق؛ ضرایب عددی برای هوای استاندارد هستند.}
@@ -825,6 +860,9 @@ $\rho$             & {\color{redn}\textsf{\bfseries SI}} & {\color{redn}$\mathrm
 $P,BHP,P_T$        & {\color{redn}\textsf{\bfseries SI}} & {\color{redn}$\mathrm{kW}$}                                   & {\color{redn}\textsf{\bfseries IP}} & {\color{redn}$\mathrm{HP}$}      & \fa{توان مفید، ترمزی، الکتروموتور}\\
 $\eta_p,\eta_m,SG$ & \multicolumn{4}{l}{{\color{redn}$\text{--}$}}                                                                                       & \fa{راندمان پمپ، موتور و چگالی نسبی}\\
 \end{tabular*}}
+\warn{
+توان حقیقی وابسته به مقدار جریان است در نتیجه در جریان صفر مقدار توان حقیقی صفر است.
+}
 \end{secbox}
 
 \begin{secbox}{Parallel \& Series Pumps}{پمپ‌های موازی و سری}
