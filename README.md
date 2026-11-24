@@ -10,6 +10,11 @@ INBR is a professional exam for HVAC, Equipment, and Building inspectors. Here a
 - استفاده‌ی تجاری (پکیج فروشی و ...) هم مجاز نیست.
 
 
+## Download دانلود
+[نمایش یا دانلود PDF](cheatsheet.pdf)
+
+
+
 ## سایر منابع
 یک سری منابع خوب دیگه هم جمع‌آوری کردم که خوبه بهشون یک سری بزنید. برای آزمون من که خیلی خوب بودن. 
 https://github.com/alirezaghavaminia/INBR-Exam-Resources
@@ -17,6 +22,3 @@ https://github.com/alirezaghavaminia/INBR-Exam-Resources
 ## نحوه‌ی تغییر
 
 این جزوه با استفاده از واژه‌پرداز Latex ساخته شده. ولی برای فارسی نویسی از Xepersian استفاده نکردم. (به خاطر این که میخواستم این را بعدا هم بتونم با هوش مصنوعی بهترش کنم و غالب هوش مصنوعی‌ها زیپرشین را نمیشناختن.) ولی در کل چیزی از ارزش‌های ما کم نمی‌کنه. می‌تونید از الگوی سایر فرمول‌ها استفاده کنید. توضیح نداره :) خیلی پیچیده نیست.
-
-## Download دانلود
-[نمایش یا دانلود PDF](cheatsheet.pdf)
